@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#1 Two Sum | LeetCode Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/tokyo-night-dark.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="back-link-container">
+            <a href="../index.html" class="back-link"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+        </div>
+        <div class="workspace-card glass-panel">
+            <div class="workspace-header">
+                <div class="workspace-header-info">
+                    <span class="problem-num">#1</span>
+                    <span class="difficulty-badge easy">Easy</span>
+                    <div class="workspace-title-row"><h2>Two Sum</h2></div>
+                </div>
+                <div class="workspace-action-buttons">
+                    <button class="btn-icon bookmark" id="bookmark-btn" title="Toggle Review Bookmark">
+                        <i data-lucide="star"></i>
+                    </button>
+                    <span style="font-size:0.8rem;color:var(--text-muted);margin-left:1rem;">2025-05-20</span>
+                </div>
+            </div>
+            <div class="workspace-content-grid">
+                <div class="workspace-col-left">
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="align-left"></i> Problem Statement</h3>
+                        <div class="statement-text">Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.</div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="terminal"></i> Input/Output Examples</h3>
+                        <div class="examples-list">
+                            <div class="example-box">
+                                <div class="example-title">Example 1</div>
+                                <div class="example-io">
+                                    <span>Input:</span><span>nums = [2,7,11,15], target = 9</span>
+                                    <span>Output:</span><span>[0,1]</span>
+                                </div>
+                                <div class="example-expl">Because nums[0] + nums[1] == 9, we return [0, 1].</div>
+                                <div class="visual-block">Hash Table lookup simulation:
+Hash Map: {value : index}
+
+Iteration 0: num = 2, complement = 9 - 2 = 7
+- 7 not in hash map -> insert {2 : 0}
+
+Iteration 1: num = 7, complement = 9 - 7 = 2
+- 2 IS in hash map! Value 2 is found at index 0
+- Return [0, 1]</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="activity"></i> Complexity Analysis</h3>
+                        <div class="complexity-grid">
+                            <div class="complexity-box time">
+                                <div class="complexity-header"><span class="complexity-label">Time</span><i data-lucide="clock" style="width:14px;height:14px;color:#f472b6;"></i></div>
+                                <div class="complexity-value">O(n)</div>
+                                <div class="complexity-desc">Single pass. Each hash table lookup is O(1).</div>
+                            </div>
+                            <div class="complexity-box space">
+                                <div class="complexity-header"><span class="complexity-label">Space</span><i data-lucide="box" style="width:14px;height:14px;color:#38bdf8;"></i></div>
+                                <div class="complexity-value">O(n)</div>
+                                <div class="complexity-desc">Hash table stores at most n elements.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="workspace-col-right">
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="code"></i> Approach: <span style="color:var(--accent-indigo);text-transform:none;margin-left:0.25rem;">One-Pass Hash Table</span></h3>
+                        <div class="notes-box">Create a hash map to store {value : index}.<br><br>1. Iterate with index i and element num.<br>2. Calculate complement = target - num.<br>3. If complement exists in seen, return [seen[complement], i].<br>4. Otherwise insert seen[num] = i.</div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="alert-circle"></i> Wrong Attempts</h3>
+                        <div class="notes-box" style="border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.02);color:#fca5a5;">Nested loops O(N²) brute force — bad time complexity. Hash map optimizes to linear.</div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="cpu"></i> Optimal Implementation</h3>
+                        <div class="code-container">
+                            <div class="code-bar">
+                                <span class="code-lang-label"><i data-lucide="terminal" style="width:14px;height:14px;"></i> python</span>
+                                <button class="btn-copy" onclick="copyCode(this)"><i data-lucide="copy" style="width:14px;height:14px;"></i> Copy</button>
+                            </div>
+                            <pre><code class="language-python" id="code-block">def twoSum(self, nums: List[int], target: int) -> List[int]:
+    seen = {}
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return [seen[complement], i]
+        seen[num] = i
+    return []</code></pre>
+                        </div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="lightbulb"></i> Key Takeaway</h3>
+                        <div class="pattern-takeaway"><i data-lucide="zap" class="takeaway-icon"></i><div class="takeaway-text">Search matching pair in unsorted array = think Hash Map</div></div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="link"></i> Similar Problems</h3>
+                        <div class="similar-grid">
+                            <span class="similar-pill"><i data-lucide="link"></i> #15 3Sum</span>
+                            <span class="similar-pill"><i data-lucide="link"></i> #167 Two Sum II</span>
+                        </div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="pencil"></i> Personal Notes</h3>
+                        <div class="notes-box" style="border-style:solid;border-color:rgba(255,255,255,0.06);background:rgba(255,255,255,0.01);">Classic problem. Very standard dictionary lookup. Handles O(1) search speeds.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+    <script>
+        hljs.highlightAll();
+        lucide.createIcons();
+
+        // Copy Code Functionality
+        function copyCode(btn) {
+            const code = document.getElementById('code-block').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = `<i data-lucide="check" style="width: 14px; height: 14px; color: #10b981;"></i> Copied!`;
+                lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+
+        // Bookmark Review System
+        const problemId = "prob-1";
+        const bookmarkBtn = document.getElementById('bookmark-btn');
+        let bookmarkedIds = [];
+
+        try {
+            const stored = localStorage.getItem('leetcode_bookmarks');
+            if (stored) {
+                bookmarkedIds = JSON.parse(stored);
+            }
+        } catch(e) {
+            console.error(e);
+        }
+
+        if (bookmarkedIds.includes(problemId)) {
+            bookmarkBtn.classList.add('active');
+        }
+
+        bookmarkBtn.addEventListener('click', () => {
+            const index = bookmarkedIds.indexOf(problemId);
+            if (index > -1) {
+                bookmarkedIds.splice(index, 1);
+                bookmarkBtn.classList.remove('active');
+            } else {
+                bookmarkedIds.push(problemId);
+                bookmarkBtn.classList.add('active');
+            }
+            localStorage.setItem('leetcode_bookmarks', JSON.stringify(bookmarkedIds));
+        });
+    </script>
+</body>
+</html>

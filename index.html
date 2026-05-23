@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Study Tracker & Workspace</title>
+    <meta name="description" content="A gorgeous, dark-themed LeetCode problem tracker and study note dashboard. Search, filter, and track coding notes.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .stats-diagram-bar {
+            width: 100%; height: 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px; overflow: hidden; margin-top: 0.5rem;
+        }
+        .stats-diagram-fill {
+            height: 100%; border-radius: 3px; width: 0%;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- Header -->
+        <header>
+            <div class="header-title-area">
+                <h1>LeetCode Tracker</h1>
+                <p>Personal study notes & algorithms index dashboard</p>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <section class="stats-grid" id="stats-dashboard"></section>
+
+        <!-- Filters -->
+        <section class="controls-panel glass-panel">
+            <div class="filter-row-primary">
+                <div class="search-wrapper">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="search-input" class="search-input" placeholder="Search by name, number, tags..." oninput="renderCardsList()">
+                </div>
+                <div class="btn-group" id="difficulty-filter-group">
+                    <button class="btn-tab active" onclick="setDifficultyFilter('All')">All</button>
+                    <button class="btn-tab easy-tab" onclick="setDifficultyFilter('Easy')">Easy</button>
+                    <button class="btn-tab medium-tab" onclick="setDifficultyFilter('Medium')">Medium</button>
+                    <button class="btn-tab hard-tab" onclick="setDifficultyFilter('Hard')">Hard</button>
+                </div>
+                <button class="btn-toggle-review" id="review-filter-btn" onclick="toggleReviewOnlyFilter()">
+                    <i data-lucide="star" style="width:16px;height:16px;"></i> Needs Review Only
+                </button>
+            </div>
+            <div class="tags-filter-container">
+                <span class="tags-filter-label">Filter by Tag:</span>
+                <div class="tags-scroller" id="tags-scroller-pills"></div>
+            </div>
+        </section>
+
+        <!-- Cards Grid -->
+        <main class="cards-grid" id="problem-cards-grid"></main>
+
+    </div>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Load problems registry -->
+    <script src="problems.js"></script>
+
+    <script>
+        // State
+        let problems = [];
+        let bookmarkedIds = [];
+        let activeDifficultyFilter = 'All';
+        let activeTagFilter = 'All';
+        let activeReviewOnlyFilter = false;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initData();
+            renderDashboard();
+            lucide.createIcons();
+        });
+
+        function initData() {
+            problems = JSON.parse(JSON.stringify(PROBLEMS));
+            const stored = localStorage.getItem('leetcode_bookmarks');
+            if (stored) {
+                try {
+                    bookmarkedIds = JSON.parse(stored);
+                    problems.forEach(p => {
+                        if (bookmarkedIds.includes(p.id)) p.needsReview = true;
+                    });
+                } catch(e) { console.error(e); }
+            }
+        }
+
+        function syncToLocalStorage() {
+            bookmarkedIds = problems.filter(p => p.needsReview).map(p => p.id);
+            localStorage.setItem('leetcode_bookmarks', JSON.stringify(bookmarkedIds));
+        }
+
+        function renderDashboard() {
+            renderStats();
+            renderTagFilterPills();
+            renderCardsList();
+        }
+
+        function renderStats() {
+            const total = problems.length;
+            const easy = problems.filter(p => p.difficulty === 'Easy').length;
+            const medium = problems.filter(p => p.difficulty === 'Medium').length;
+            const hard = problems.filter(p => p.difficulty === 'Hard').length;
+            const review = problems.filter(p => p.needsReview).length;
+            const pct = n => total > 0 ? Math.round((n / total) * 100) : 0;
+
+            document.getElementById('stats-dashboard').innerHTML = `
+                <div class="stat-card glass-panel total">
+                    <div class="stat-icon"><i data-lucide="layers" style="width:22px;height:22px;"></i></div>
+                    <div class="stat-info"><span class="stat-value">${total}</span><span class="stat-label">Total Solved</span></div>
+                </div>
+                <div class="stat-card glass-panel easy">
+                    <div class="stat-icon"><i data-lucide="check-circle" style="width:22px;height:22px;"></i></div>
+                    <div class="stat-info" style="width:100%"><span class="stat-value">${easy}</span><span class="stat-label">Easy (${pct(easy)}%)</span>
+                        <div class="stats-diagram-bar"><div class="stats-diagram-fill" style="background:var(--easy-color);width:${pct(easy)}%"></div></div>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel medium">
+                    <div class="stat-icon"><i data-lucide="trending-up" style="width:22px;height:22px;"></i></div>
+                    <div class="stat-info" style="width:100%"><span class="stat-value">${medium}</span><span class="stat-label">Medium (${pct(medium)}%)</span>
+                        <div class="stats-diagram-bar"><div class="stats-diagram-fill" style="background:var(--medium-color);width:${pct(medium)}%"></div></div>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel hard">
+                    <div class="stat-icon"><i data-lucide="alert-triangle" style="width:22px;height:22px;"></i></div>
+                    <div class="stat-info" style="width:100%"><span class="stat-value">${hard}</span><span class="stat-label">Hard (${pct(hard)}%)</span>
+                        <div class="stats-diagram-bar"><div class="stats-diagram-fill" style="background:var(--hard-color);width:${pct(hard)}%"></div></div>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel review">
+                    <div class="stat-icon"><i data-lucide="star" style="width:22px;height:22px;"></i></div>
+                    <div class="stat-info"><span class="stat-value">${review}</span><span class="stat-label">Needs Review</span></div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function renderTagFilterPills() {
+            const tagsSet = new Set();
+            problems.forEach(p => { if (p.tags) p.tags.forEach(t => tagsSet.add(t.trim())); });
+            const tags = Array.from(tagsSet).sort();
+            const el = document.getElementById('tags-scroller-pills');
+            let html = `<span class="tag-pill ${activeTagFilter === 'All' ? 'active' : ''}" onclick="setTagFilter('All')">All Tags</span>`;
+            tags.forEach(t => { html += `<span class="tag-pill ${activeTagFilter === t ? 'active' : ''}" onclick="setTagFilter('${t}')">${t}</span>`; });
+            el.innerHTML = html;
+        }
+
+        function renderCardsList() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const grid = document.getElementById('problem-cards-grid');
+
+            const filtered = problems.filter(p => {
+                const matchSearch = !query ||
+                    p.name.toLowerCase().includes(query) ||
+                    p.number.toLowerCase().includes(query) ||
+                    p.statement.toLowerCase().includes(query) ||
+                    (p.tags && p.tags.some(t => t.toLowerCase().includes(query)));
+                const matchDiff = activeDifficultyFilter === 'All' || p.difficulty === activeDifficultyFilter;
+                const matchTag = activeTagFilter === 'All' || (p.tags && p.tags.includes(activeTagFilter));
+                const matchReview = !activeReviewOnlyFilter || p.needsReview;
+                return matchSearch && matchDiff && matchTag && matchReview;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="empty-state glass-panel">
+                    <div class="empty-state-icon"><i data-lucide="search" style="width:32px;height:32px;"></i></div>
+                    <h3>No problems match filters</h3>
+                    <p>Try resetting the search bar or active tag selection.</p>
+                </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            filtered.sort((a, b) => new Date(b.dateSolved) - new Date(a.dateSolved));
+
+            let html = '';
+            filtered.forEach(p => {
+                const dc = p.difficulty.toLowerCase();
+                const star = p.needsReview ? 'active' : '';
+                const pills = p.tags.map(t => `<span class="card-tag-pill">${t}</span>`).join('');
+                html += `
+                    <a href="${p.fileUrl}" class="problem-card glass-panel ${dc}-card">
+                        <div class="card-header">
+                            <div class="card-meta">
+                                <span class="problem-num">#${p.number}</span>
+                                <span class="difficulty-badge ${dc}">${p.difficulty}</span>
+                            </div>
+                            <button class="card-review-star ${star}" onclick="toggleCardReview(event, '${p.id}')" title="Mark for Review">
+                                <i data-lucide="star" style="width:18px;height:18px;"></i>
+                            </button>
+                        </div>
+                        <h3 class="card-title">${p.name}</h3>
+                        <p class="card-description">${p.statement}</p>
+                        <div class="card-footer">
+                            <div class="card-tags">${pills}</div>
+                            <span class="card-date">${p.dateSolved}</span>
+                        </div>
+                    </a>`;
+            });
+            grid.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function setDifficultyFilter(d) {
+            activeDifficultyFilter = d;
+            const tabs = document.querySelectorAll('#difficulty-filter-group .btn-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            const map = {'All':0,'Easy':1,'Medium':2,'Hard':3};
+            tabs[map[d]].classList.add('active');
+            renderCardsList();
+        }
+
+        function setTagFilter(tag) {
+            activeTagFilter = tag;
+            renderTagFilterPills();
+            renderCardsList();
+        }
+
+        function toggleReviewOnlyFilter() {
+            activeReviewOnlyFilter = !activeReviewOnlyFilter;
+            const btn = document.getElementById('review-filter-btn');
+            btn.classList.toggle('active', activeReviewOnlyFilter);
+            renderCardsList();
+        }
+
+        function toggleCardReview(event, id) {
+            event.preventDefault();
+            event.stopPropagation();
+            const idx = problems.findIndex(p => p.id === id);
+            if (idx !== -1) {
+                problems[idx].needsReview = !problems[idx].needsReview;
+                syncToLocalStorage();
+                renderStats();
+                const target = event.currentTarget;
+                target.classList.toggle('active', problems[idx].needsReview);
+                if (problems[idx].needsReview) showToast(`Flagged #${problems[idx].number} for review`);
+            }
+        }
+
+        function showToast(message) {
+            const c = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.innerHTML = `<i data-lucide="info" style="color:var(--accent-indigo);flex-shrink:0;width:18px;height:18px;"></i><span>${message}</span>`;
+            c.appendChild(t);
+            lucide.createIcons();
+            setTimeout(() => { t.style.animation='none'; t.style.opacity='0'; setTimeout(() => t.remove(), 300); }, 3000);
+        }
+    </script>
+</body>
+</html>

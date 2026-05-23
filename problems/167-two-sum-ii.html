@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#167 Two Sum II - Input Array Is Sorted | LeetCode Tracker</title>
+    <meta name="description" content="Study notes for LeetCode #167 Two Sum II - Input Array Is Sorted. Two Pointers approach.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/tokyo-night-dark.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- Back Navigation -->
+        <div class="back-link-container">
+            <a href="../index.html" class="back-link">
+                <i data-lucide="arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Workspace Card -->
+        <div class="workspace-card glass-panel">
+
+            <!-- Header -->
+            <div class="workspace-header">
+                <div class="workspace-header-info">
+                    <span class="problem-num">#167</span>
+                    <span class="difficulty-badge medium">Medium</span>
+                    <div class="workspace-title-row">
+                        <h2>Two Sum II - Input Array Is Sorted</h2>
+                    </div>
+                </div>
+                <div class="workspace-action-buttons">
+                    <button class="btn-icon bookmark" id="bookmark-btn" title="Toggle Review Bookmark">
+                        <i data-lucide="star"></i>
+                    </button>
+                    <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 1rem;">2025-05-23</span>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="workspace-content-grid">
+
+                <!-- Left Panel -->
+                <div class="workspace-col-left">
+
+                    <div class="section-block">
+                        <h3 class="section-header">
+                            <i data-lucide="align-left"></i>
+                            Problem Statement
+                        </h3>
+                        <div class="statement-text">
+                            Given a 1-indexed sorted array of integers, find two different numbers that add up to a target number. Return their indices incremented by 1 as an array of length 2.
+                        </div>
+                    </div>
+
+                    <div class="section-block">
+                        <h3 class="section-header">
+                            <i data-lucide="terminal"></i>
+                            Input/Output Examples &amp; Visualizations
+                        </h3>
+                        <div class="examples-list">
+                            <div class="example-box">
+                                <div class="example-title">Example 1</div>
+                                <div class="example-io">
+                                    <span>Input:</span>
+                                    <span>numbers = [2,7,11,15], target = 9</span>
+                                    <span>Output:</span>
+                                    <span>[1,2]</span>
+                                </div>
+                                <div class="example-expl">The sum of 2 and 7 is 9. Therefore index1 = 1, index2 = 2. We return [1, 2].</div>
+                                <div class="visual-block">Simulation:
+[ 2 , 7 , 11 , 15 ]   target = 9
+  ^             ^
+ left         right   -> sum = 17 (too large, right pointer moves left)
+
+[ 2 , 7 , 11 , 15 ]   target = 9
+  ^        ^
+ left    right        -> sum = 13 (too large, right pointer moves left)
+
+[ 2 , 7 , 11 , 15 ]   target = 9
+  ^   ^
+ left right           -> sum = 9 (Match! Return index1 = left+1, index2 = right+1)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-block">
+                        <h3 class="section-header">
+                            <i data-lucide="activity"></i>
+                            Complexity Analysis
+                        </h3>
+                        <div class="complexity-grid">
+                            <div class="complexity-box time">
+                                <div class="complexity-header">
+                                    <span class="complexity-label">Time Complexity</span>
+                                    <i data-lucide="clock" style="width: 14px; height: 14px; color: #f472b6;"></i>
+                                </div>
+                                <div class="complexity-value">O(n)</div>
+                                <div class="complexity-desc">Each element is scanned at most once since left and right pointers only move towards each other.</div>
+                            </div>
+                            <div class="complexity-box space">
+                                <div class="complexity-header">
+                                    <span class="complexity-label">Space Complexity</span>
+                                    <i data-lucide="box" style="width: 14px; height: 14px; color: #38bdf8;"></i>
+                                </div>
+                                <div class="complexity-value">O(1)</div>
+                                <div class="complexity-desc">Only two pointer variables are allocated. No extra dynamic space is used.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Panel -->
+                <div class="workspace-col-right">
+
+                    <div class="section-block">
+                        <h3 class="section-header">
+                            <i data-lucide="code"></i>
+                            Approach &amp; Intuition: <span style="color: var(--accent-indigo); text-transform: none; margin-left: 0.25rem;">Two Pointers</span>
+                        </h3>
+                        <div class="notes-box">
+                            Initialize two pointers: `left` at the beginning (0) and `right` at the end (length-1) of the array.
+                            <br><br>1. Calculate the sum of the elements at these pointers: <code>current_sum = numbers[left] + numbers[right]</code>.
+                            <br>2. If <code>current_sum == target</code>, return <code>[left + 1, right + 1]</code> since the problem is 1-indexed.
+                            <br>3. If <code>current_sum &lt; target</code>, we need a larger sum, so we increment <code>left</code>.
+                            <br>4. If <code>current_sum &gt; target</code>, we need a smaller sum, so we decrement <code>right</code>.
+                            <br>5. Repeat until the target is found.
+                        </div>
+                    </div>
+
+                    <div class="section-block">
+                        <h3 class="section-header">
+                            <i data-lucide="alert-circle"></i>
+                            Previous / Wrong Attempts Tried
+                        </h3>
+                        <div class="notes-box" style="border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.02); color: #fca5a5;">
+                            Nested loops brute force O(N²) scan which resulted in Time Limit Exceeded (TLE) on large arrays. Binary search O(N log N) works but is suboptimal.
+                        </div>
+                    </div>
+
+                    <div class="section-block">
+                        <h3 class="section-header">
+                            <i data-lucide="cpu"></i>
+                            Optimal Implementation
+                        </h3>
+                        <div class="code-container">
+                            <div class="code-bar">
+                                <span class="code-lang-label">
+                                    <i data-lucide="terminal" style="width: 14px; height: 14px;"></i>
+                                    python
+                                </span>
+                                <button class="btn-copy" onclick="copyCode(this)">
+                                    <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                                    Copy Code
+                                </button>
+                            </div>
+                            <pre><code class="language-python" id="code-block">def twoSum(self, numbers: List[int], target: int) -> List[int]:
+    # Initialize left and right pointers
+    left = 0
+    right = len(numbers) - 1
+    
+    while left < right:
+        current_sum = numbers[left] + numbers[right]
+        
+        if current_sum == target:
+            # Return 1-indexed array
+            return [left + 1, right + 1]
+        elif current_sum < target:
+            # Need a larger sum, move left rightward
+            left += 1
+        else:
+            # Need a smaller sum, move right leftward
+            right -= 1
+            
+    return []</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="section-block">
+                        <h3 class="section-header">
+                            <i data-lucide="lightbulb"></i>
+                            Key Patterns &amp; Takeaways
+                        </h3>
+                        <div class="pattern-takeaway">
+                            <i data-lucide="zap" class="takeaway-icon"></i>
+                            <div class="takeaway-text">Sorted array + find pair = think Two Pointers first</div>
+                        </div>
+                    </div>
+
+                    <div class="section-block">
+                        <h3 class="section-header">
+                            <i data-lucide="link"></i>
+                            Similar Problems
+                        </h3>
+                        <div class="similar-grid">
+                            <span class="similar-pill"><i data-lucide="link"></i> #1 Two Sum</span>
+                            <span class="similar-pill"><i data-lucide="link"></i> #15 3Sum</span>
+                        </div>
+                    </div>
+
+                    <div class="section-block">
+                        <h3 class="section-header">
+                            <i data-lucide="pencil"></i>
+                            Personal Study Notes
+                        </h3>
+                        <div class="notes-box" style="border-style: solid; border-color: rgba(255,255,255,0.06); background: rgba(255,255,255,0.01);">
+                            Solved on 2nd attempt. Key note: 1-indexed outputs are required, remember left+1 and right+1! Array is sorted, so linear two-pointers is the most elegant way.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+    <script>
+        hljs.highlightAll();
+        lucide.createIcons();
+
+        // Copy Code Functionality
+        function copyCode(btn) {
+            const code = document.getElementById('code-block').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = `<i data-lucide="check" style="width: 14px; height: 14px; color: #10b981;"></i> Copied!`;
+                lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+
+        // Bookmark Review System
+        const problemId = "prob-167";
+        const bookmarkBtn = document.getElementById('bookmark-btn');
+        let bookmarkedIds = [];
+
+        try {
+            const stored = localStorage.getItem('leetcode_bookmarks');
+            if (stored) {
+                bookmarkedIds = JSON.parse(stored);
+            }
+        } catch(e) {
+            console.error(e);
+        }
+
+        if (bookmarkedIds.includes(problemId)) {
+            bookmarkBtn.classList.add('active');
+        }
+
+        bookmarkBtn.addEventListener('click', () => {
+            const index = bookmarkedIds.indexOf(problemId);
+            if (index > -1) {
+                bookmarkedIds.splice(index, 1);
+                bookmarkBtn.classList.remove('active');
+            } else {
+                bookmarkedIds.push(problemId);
+                bookmarkBtn.classList.add('active');
+            }
+            localStorage.setItem('leetcode_bookmarks', JSON.stringify(bookmarkedIds));
+        });
+    </script>
+</body>
+</html>

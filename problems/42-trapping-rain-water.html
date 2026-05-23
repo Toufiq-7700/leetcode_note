@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#42 Trapping Rain Water | LeetCode Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/tokyo-night-dark.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="back-link-container">
+            <a href="../index.html" class="back-link"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+        </div>
+        <div class="workspace-card glass-panel">
+            <div class="workspace-header">
+                <div class="workspace-header-info">
+                    <span class="problem-num">#42</span>
+                    <span class="difficulty-badge hard">Hard</span>
+                    <div class="workspace-title-row"><h2>Trapping Rain Water</h2></div>
+                </div>
+                <div class="workspace-action-buttons">
+                    <button class="btn-icon bookmark" id="bookmark-btn" title="Toggle Review Bookmark">
+                        <i data-lucide="star"></i>
+                    </button>
+                    <span style="font-size:0.8rem;color:var(--text-muted);margin-left:1rem;">2025-05-21</span>
+                </div>
+            </div>
+            <div class="workspace-content-grid">
+                <div class="workspace-col-left">
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="align-left"></i> Problem Statement</h3>
+                        <div class="statement-text">Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.</div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="terminal"></i> Input/Output Examples</h3>
+                        <div class="examples-list">
+                            <div class="example-box">
+                                <div class="example-title">Example 1</div>
+                                <div class="example-io">
+                                    <span>Input:</span><span>height = [0,1,0,2,1,0,1,3,2,1,2,1]</span>
+                                    <span>Output:</span><span>6</span>
+                                </div>
+                                <div class="example-expl">6 units of rain water are trapped between the bars.</div>
+                                <div class="visual-block">Water trapped at bar: min(max_left, max_right) - height[i]
+Elevation map with water:
+  #                     
+  #~~~#~#               
+_##~###_##_</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="activity"></i> Complexity Analysis</h3>
+                        <div class="complexity-grid">
+                            <div class="complexity-box time">
+                                <div class="complexity-header"><span class="complexity-label">Time</span><i data-lucide="clock" style="width:14px;height:14px;color:#f472b6;"></i></div>
+                                <div class="complexity-value">O(n)</div>
+                                <div class="complexity-desc">Single pass from both ends until pointers meet.</div>
+                            </div>
+                            <div class="complexity-box space">
+                                <div class="complexity-header"><span class="complexity-label">Space</span><i data-lucide="box" style="width:14px;height:14px;color:#38bdf8;"></i></div>
+                                <div class="complexity-value">O(1)</div>
+                                <div class="complexity-desc">Pointer values and boundaries require constant memory.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="workspace-col-right">
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="code"></i> Approach: <span style="color:var(--accent-indigo);text-transform:none;margin-left:0.25rem;">Two Pointers (Optimal)</span></h3>
+                        <div class="notes-box">Water level at any index depends on the shorter of max boundaries left and right.<br><br>1. Init left=0, right=len-1, left_max=0, right_max=0.<br>2. If height[left] &lt; height[right]: update left_max or add water, move left.<br>3. Else: update right_max or add water, move right.<br>4. Return total trapped water.</div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="alert-circle"></i> Wrong Attempts</h3>
+                        <div class="notes-box" style="border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.02);color:#fca5a5;">DP approach using prefix/suffix max arrays — O(N) time but O(N) space. Two pointers optimizes space to O(1).</div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="cpu"></i> Optimal Implementation</h3>
+                        <div class="code-container">
+                            <div class="code-bar">
+                                <span class="code-lang-label"><i data-lucide="terminal" style="width:14px;height:14px;"></i> python</span>
+                                <button class="btn-copy" onclick="copyCode(this)"><i data-lucide="copy" style="width:14px;height:14px;"></i> Copy</button>
+                            </div>
+                            <pre><code class="language-python" id="code-block">def trap(self, height: List[int]) -> int:
+    if not height:
+        return 0
+        
+    left, right = 0, len(height) - 1
+    left_max, right_max = height[left], height[right]
+    water = 0
+    
+    while left < right:
+        if height[left] < height[right]:
+            left += 1
+            left_max = max(left_max, height[left])
+            water += left_max - height[left]
+        else:
+            right -= 1
+            right_max = max(right_max, height[right])
+            water += right_max - height[right]
+            
+    return water</code></pre>
+                        </div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="lightbulb"></i> Key Takeaway</h3>
+                        <div class="pattern-takeaway"><i data-lucide="zap" class="takeaway-icon"></i><div class="takeaway-text">Prefix/suffix max calculations = think Two Pointers inward convergence</div></div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="link"></i> Similar Problems</h3>
+                        <div class="similar-grid">
+                            <span class="similar-pill"><i data-lucide="link"></i> #11 Container With Most Water</span>
+                            <span class="similar-pill"><i data-lucide="link"></i> #84 Largest Rectangle in Histogram</span>
+                        </div>
+                    </div>
+                    <div class="section-block">
+                        <h3 class="section-header"><i data-lucide="pencil"></i> Personal Notes</h3>
+                        <div class="notes-box" style="border-style:solid;border-color:rgba(255,255,255,0.06);background:rgba(255,255,255,0.01);">Tough hard problem. The key is understanding that height[left] &lt; height[right] implies left_max is the limiting factor.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+    <script>
+        hljs.highlightAll();
+        lucide.createIcons();
+
+        // Copy Code Functionality
+        function copyCode(btn) {
+            const code = document.getElementById('code-block').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = `<i data-lucide="check" style="width: 14px; height: 14px; color: #10b981;"></i> Copied!`;
+                lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+
+        // Bookmark Review System
+        const problemId = "prob-42";
+        const bookmarkBtn = document.getElementById('bookmark-btn');
+        let bookmarkedIds = [];
+
+        try {
+            const stored = localStorage.getItem('leetcode_bookmarks');
+            if (stored) {
+                bookmarkedIds = JSON.parse(stored);
+            }
+        } catch(e) {
+            console.error(e);
+        }
+
+        if (bookmarkedIds.includes(problemId)) {
+            bookmarkBtn.classList.add('active');
+        }
+
+        bookmarkBtn.addEventListener('click', () => {
+            const index = bookmarkedIds.indexOf(problemId);
+            if (index > -1) {
+                bookmarkedIds.splice(index, 1);
+                bookmarkBtn.classList.remove('active');
+            } else {
+                bookmarkedIds.push(problemId);
+                bookmarkBtn.classList.add('active');
+            }
+            localStorage.setItem('leetcode_bookmarks', JSON.stringify(bookmarkedIds));
+        });
+    </script>
+</body>
+</html>
