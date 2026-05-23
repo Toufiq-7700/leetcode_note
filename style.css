@@ -669,40 +669,9 @@ header {
     height: 14px;
 }
 
-/* Notification Toast styles */
-.toast-container {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
 
-.toast {
-    background: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-left: 4px solid var(--accent-indigo);
-    padding: 1rem 1.5rem;
-    border-radius: 10px;
-    color: var(--text-primary);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    transform: translateY(50px);
-    opacity: 0;
-    animation: slideInToast 0.3s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    max-width: 350px;
-}
+/* Notification Toast styles removed */
 
-@keyframes slideInToast {
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
 
 /* Standalone navigation details */
 .back-link-container {
