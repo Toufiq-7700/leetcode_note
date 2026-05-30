@@ -4,12 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LeetCode Tracker</title>
-    <meta name="description" content="A simple, premium personal LeetCode problem tracker.">
+    <meta name="description" content="A minimal, premium personal LeetCode problem tracker.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ── Tag filter bar ── */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .filter-btn {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-secondary);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.02em;
+        }
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.09);
+            color: var(--text-primary);
+            border-color: rgba(255,255,255,0.2);
+        }
+        .filter-btn.active {
+            background: rgba(99,102,241,0.18);
+            border-color: var(--accent-indigo);
+            color: #c7d2fe;
+            box-shadow: 0 0 10px rgba(99,102,241,0.15);
+        }
+
+        /* ── Search panel ── */
+        .search-panel {
+            margin-bottom: 1.5rem;
+        }
+        .search-wrapper {
+            position: relative;
+        }
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 18px;
+            height: 18px;
+        }
+        .search-input {
+            width: 100%;
+            background: rgba(15,23,42,0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-indigo);
+            box-shadow: 0 0 15px rgba(99,102,241,0.2);
+            background: rgba(15,23,42,0.85);
+        }
+        .search-input::placeholder { color: var(--text-muted); }
+
+        /* ── No results state ── */
+        .no-results {
+            display: none;
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+    </style>
 </head>
 <body>
 
@@ -19,31 +97,47 @@
         <header>
             <div class="header-title-area">
                 <h1>LeetCode Tracker</h1>
-                <p>Personal study notes & solved algorithms</p>
+                <p>Personal study notes &amp; solved algorithms</p>
             </div>
         </header>
 
-        <!-- Search Bar -->
-        <section class="controls-panel glass-panel" style="margin-bottom: 2.5rem; padding: 1rem 1.5rem;">
+        <!-- Search -->
+        <div class="search-panel">
             <div class="search-wrapper">
                 <i data-lucide="search" class="search-icon"></i>
-                <input type="text" id="search-input" class="search-input" placeholder="Search by name, number, description..." oninput="filterCards()">
+                <input type="text" id="search-input" class="search-input"
+                       placeholder="Search by name or number…"
+                       oninput="applyFilters()">
             </div>
-        </section>
+        </div>
+
+        <!-- Tag Filters -->
+        <div class="filter-bar" id="filter-bar">
+            <button class="filter-btn active" data-tag="All" onclick="setTag(this)">All</button>
+            <button class="filter-btn" data-tag="Array"         onclick="setTag(this)">Array</button>
+            <button class="filter-btn" data-tag="Hash Table"    onclick="setTag(this)">Hash Table</button>
+            <button class="filter-btn" data-tag="Two Pointers"  onclick="setTag(this)">Two Pointers</button>
+            <button class="filter-btn" data-tag="Sorting"       onclick="setTag(this)">Sorting</button>
+            <button class="filter-btn" data-tag="Binary Search" onclick="setTag(this)">Binary Search</button>
+            <button class="filter-btn" data-tag="Dynamic Programming" onclick="setTag(this)">Dynamic Programming</button>
+            <button class="filter-btn" data-tag="Monotonic Stack" onclick="setTag(this)">Monotonic Stack</button>
+        </div>
 
         <!-- Cards Grid -->
         <main class="cards-grid" id="problem-cards-grid">
-            
+
             <!-- #167 Two Sum II -->
-            <a href="problems/167-two-sum-ii.html" class="problem-card glass-panel medium-card">
+            <a href="problems/167-two-sum-ii.html"
+               class="problem-card glass-panel medium-card"
+               data-tags="Array,Two Pointers,Binary Search">
                 <div class="card-header">
                     <div class="card-meta">
                         <span class="problem-num">#167</span>
                         <span class="difficulty-badge medium">Medium</span>
                     </div>
                 </div>
-                <h3 class="card-title">Two Sum II - Input Array Is Sorted</h3>
-                <p class="card-description">Given a 1-indexed sorted array of integers, find two different numbers that add up to a target number. Return their indices incremented by 1 as an array of length 2.</p>
+                <h3 class="card-title">Two Sum II – Input Array Is Sorted</h3>
+                <p class="card-description">Given a 1-indexed sorted array, find two numbers that add up to target. Return their 1-indexed positions.</p>
                 <div class="card-footer">
                     <div class="card-tags">
                         <span class="card-tag-pill">Array</span>
@@ -55,7 +149,9 @@
             </a>
 
             <!-- #42 Trapping Rain Water -->
-            <a href="problems/42-trapping-rain-water.html" class="problem-card glass-panel hard-card">
+            <a href="problems/42-trapping-rain-water.html"
+               class="problem-card glass-panel hard-card"
+               data-tags="Array,Two Pointers,Dynamic Programming,Monotonic Stack">
                 <div class="card-header">
                     <div class="card-meta">
                         <span class="problem-num">#42</span>
@@ -63,12 +159,12 @@
                     </div>
                 </div>
                 <h3 class="card-title">Trapping Rain Water</h3>
-                <p class="card-description">Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.</p>
+                <p class="card-description">Given n non-negative integers representing an elevation map, compute how much water can be trapped after raining.</p>
                 <div class="card-footer">
                     <div class="card-tags">
                         <span class="card-tag-pill">Array</span>
                         <span class="card-tag-pill">Two Pointers</span>
-                        <span class="card-tag-pill">Dynamic Programming</span>
+                        <span class="card-tag-pill">DP</span>
                         <span class="card-tag-pill">Monotonic Stack</span>
                     </div>
                     <span class="card-date">2025-05-21</span>
@@ -76,7 +172,9 @@
             </a>
 
             <!-- #15 3Sum -->
-            <a href="problems/15-three-sum.html" class="problem-card glass-panel medium-card">
+            <a href="problems/15-three-sum.html"
+               class="problem-card glass-panel medium-card"
+               data-tags="Array,Two Pointers,Sorting">
                 <div class="card-header">
                     <div class="card-meta">
                         <span class="problem-num">#15</span>
@@ -84,7 +182,7 @@
                     </div>
                 </div>
                 <h3 class="card-title">3Sum</h3>
-                <p class="card-description">Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.</p>
+                <p class="card-description">Find all unique triplets in an array that sum to zero. Sort first, then use a fixed pointer + two pointers approach.</p>
                 <div class="card-footer">
                     <div class="card-tags">
                         <span class="card-tag-pill">Array</span>
@@ -96,7 +194,9 @@
             </a>
 
             <!-- #1 Two Sum -->
-            <a href="problems/1-two-sum.html" class="problem-card glass-panel easy-card">
+            <a href="problems/1-two-sum.html"
+               class="problem-card glass-panel easy-card"
+               data-tags="Array,Hash Table">
                 <div class="card-header">
                     <div class="card-meta">
                         <span class="problem-num">#1</span>
@@ -104,7 +204,7 @@
                     </div>
                 </div>
                 <h3 class="card-title">Two Sum</h3>
-                <p class="card-description">Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.</p>
+                <p class="card-description">Given an array and a target, return the indices of the two numbers that add up to the target using a hash map.</p>
                 <div class="card-footer">
                     <div class="card-tags">
                         <span class="card-tag-pill">Array</span>
@@ -114,29 +214,49 @@
                 </div>
             </a>
 
-        </main>
+            <!-- No-results message -->
+            <div class="no-results" id="no-results">
+                <i data-lucide="search" style="width:40px;height:40px;margin-bottom:1rem;opacity:0.4;"></i>
+                <p>No problems match your search / filter.</p>
+            </div>
 
+        </main>
     </div>
 
     <script>
-        // Initialize Lucide Icons
         lucide.createIcons();
 
-        // Simple client-side search filtering
-        function filterCards() {
+        let activeTag = 'All';
+
+        function setTag(btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeTag = btn.dataset.tag;
+            applyFilters();
+        }
+
+        function applyFilters() {
             const query = document.getElementById('search-input').value.toLowerCase().trim();
             const cards = document.querySelectorAll('.problem-card');
+            let visible = 0;
+
             cards.forEach(card => {
                 const title = card.querySelector('.card-title').textContent.toLowerCase();
-                const num = card.querySelector('.problem-num').textContent.toLowerCase();
-                const desc = card.querySelector('.card-description').textContent.toLowerCase();
-                
-                if (title.includes(query) || num.includes(query) || desc.includes(query)) {
+                const num   = card.querySelector('.problem-num').textContent.toLowerCase();
+                const tags  = card.dataset.tags || '';
+
+                const matchSearch = !query || title.includes(query) || num.includes(query);
+                const matchTag    = activeTag === 'All' || tags.includes(activeTag);
+
+                if (matchSearch && matchTag) {
                     card.style.display = '';
+                    visible++;
                 } else {
                     card.style.display = 'none';
                 }
             });
+
+            document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
         }
     </script>
 </body>
